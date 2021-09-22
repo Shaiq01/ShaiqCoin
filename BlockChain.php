@@ -3,6 +3,7 @@ include 'Block.php';
 
 class BlockChain {
     public $chain;
+    public $difficulty = 5;
 
     public function __construct() {
         $this->chain = [
@@ -15,7 +16,7 @@ class BlockChain {
      */
     public function createGenesisBlock()
     {
-        return new Block(0, date('d/m/y'), 'Genesis Block', "0");
+        return new Block(0, date('d/m/y'), "{Genesis Block}", "0");
     }
 
     public function getLatestBlock()
@@ -26,7 +27,7 @@ class BlockChain {
     public function addBlock(Block $new_block)
     {
         $new_block->previous_hash = $this->getLatestBlock()->hash;
-        $new_block->hash = $new_block->calculateHash();
+        $new_block->mineBlock($this->difficulty);
         array_push($this->chain, $new_block);
     }
 
