@@ -2,16 +2,17 @@
 
 include 'BlockChain.php';
 
+$my_private_key = file_get_contents('private_key.pem');
+$my_address = file_get_contents('public_key.pem');
+
 $shaiq_coin = new BlockChain;
 
-$shaiq_coin->createTransaction(new Transaction('address1', 'address2', 100));
-$shaiq_coin->createTransaction(new Transaction('address2', 'address1', 50));
+$transaction = new Transaction($my_address, 'public_key_for_reciever', 10);
+$transaction->signTransaction($my_address, $my_private_key);
+
+$shaiq_coin->addTransaction($transaction);
 
 var_dump('mining transactions');
-$shaiq_coin->minePendingTransactions('shaiq-address');
-var_dump('balance of Shaiq is: ' . $shaiq_coin->getBalanceOfAddress('shaiq-address'));
-
-
-var_dump('mining transactions again');
-$shaiq_coin->minePendingTransactions('shaiq-address');
-var_dump('balance of Shaiq is: ' . $shaiq_coin->getBalanceOfAddress('shaiq-address'));
+$shaiq_coin->minePendingTransactions($my_address);
+$shaiq_coin->minePendingTransactions($my_address);
+var_dump('balance of Shaiq is: ' . $shaiq_coin->getBalanceOfAddress($my_address));

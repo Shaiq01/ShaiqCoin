@@ -29,4 +29,15 @@ class Block {
 
         echo "Block Mined: " . $this->hash;
     }
+
+    public function hasValidTransaction()
+    {
+        foreach($this->transactions as $transaction){
+            if(!$transaction->isValid()){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

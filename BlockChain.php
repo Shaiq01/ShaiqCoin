@@ -41,8 +41,16 @@ class BlockChain {
         ];
     }
 
-    public function createTransaction(Transaction $transaction)
+    public function addTransaction(Transaction $transaction)
     {
+        if(!$transaction->from_address || !$transaction->to_address){
+            throw new Error('Transaction must include a from and to address');
+        }
+
+        if(!$transaction->isValid()){
+            throw new Error('Cannot add Invalid Transaction to chain');
+        }
+
         array_push($this->pending_transactions, $transaction);
     }
 
@@ -73,6 +81,10 @@ class BlockChain {
         for($i = 1; $i < count($this->chain); $i++){
             $current_block = $this->chain[$i];
             $previous_block = $this->chain[$i - 1];
+
+            if(!$current_block->hasValidTransaction()){
+                return false;
+            }
 
             if($current_block->hash !== $current_block->calculateHash()){
                 return false;
