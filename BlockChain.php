@@ -1,9 +1,13 @@
 <?php
+
 include 'Block.php';
+include 'Transaction.php';
 
 class BlockChain {
     public $chain;
-    public $difficulty = 5;
+    public $difficulty = 1;
+    public $pending_transactions = [];
+    public $mining_reward = 100;
 
     public function __construct() {
         $this->chain = [
@@ -16,19 +20,52 @@ class BlockChain {
      */
     public function createGenesisBlock()
     {
-        return new Block(0, date('d/m/y'), "{Genesis Block}", "0");
+        return new Block(date('d/m/y'), "{Genesis Block}", "0");
     }
 
     public function getLatestBlock()
     {
         return $this->chain[count($this->chain) - 1];
     }
-
-    public function addBlock(Block $new_block)
+    
+    public function minePendingTransactions($mining_reward_address)
     {
-        $new_block->previous_hash = $this->getLatestBlock()->hash;
-        $new_block->mineBlock($this->difficulty);
-        array_push($this->chain, $new_block);
+        $block = new Block(date('d/m/y'), $this->pending_transactions);
+        $block->mineBlock($this->difficulty);
+
+        echo 'Block Successfully Mined';
+        array_push($this->chain, $block);
+
+        $this->pending_transactions = [
+            new Transaction(null, $mining_reward_address, $this->mining_reward )
+        ];
+    }
+
+    public function createTransaction(Transaction $transaction)
+    {
+        array_push($this->pending_transactions, $transaction);
+    }
+
+    public function getBalanceOfAddress($address)
+    {
+        $balance = 0;
+
+        foreach ($this->chain as $block){
+            if(gettype($block->transactions) == 'string'){
+                continue;
+            }
+            foreach($block->transactions as $transaction){
+                if($transaction->from_address === $address){
+                    $balance -= $transaction->amount;
+                }
+
+                if($transaction->to_address === $address){
+                    $balance += $transaction->amount;
+                }
+            }
+        }
+
+        return $balance;
     }
 
     public function isChainValid()

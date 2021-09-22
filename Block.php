@@ -1,17 +1,15 @@
 <?php
 
 class Block {
-    private $index;
     private $timestamp;
-    public $data;
+    public $transactions;
     public $previous_hash;
     public $hash;
     public $nonce;
 
-    public function __construct($index, $timestamp, $data, $previous_hash = '') {
-        $this->index = $index;
+    public function __construct($timestamp, $transactions, $previous_hash = '') {
         $this->timestamp = $timestamp;
-        $this->data = $data;
+        $this->transactions = $transactions;
         $this->previous_hash = $previous_hash;
         $this->hash = $this->calculateHash();
         $this->nonce = 0;
@@ -19,7 +17,7 @@ class Block {
 
     public function calculateHash()
     {
-        return hash('SHA256',$this->index . $this->timestamp. json_encode($this->data) . $this->previous_hash . $this->nonce);
+        return hash('SHA256',$this->timestamp. json_encode($this->transactions) . $this->previous_hash . $this->nonce);
     }
 
     public function mineBlock($difficulty)

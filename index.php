@@ -2,9 +2,16 @@
 
 include 'BlockChain.php';
 
-$shaiqCoin = new BlockChain;
+$shaiq_coin = new BlockChain;
 
-// echo "Mining Block 1";
-$shaiqCoin->addBlock(new Block(1, date('d/m/y'), "{amount:400}"));
-// echo "Mining Block 2";
-$shaiqCoin->addBlock(new Block(2, date('d/m/y'), "{amount:100}"));
+$shaiq_coin->createTransaction(new Transaction('address1', 'address2', 100));
+$shaiq_coin->createTransaction(new Transaction('address2', 'address1', 50));
+
+var_dump('mining transactions');
+$shaiq_coin->minePendingTransactions('shaiq-address');
+var_dump('balance of Shaiq is: ' . $shaiq_coin->getBalanceOfAddress('shaiq-address'));
+
+
+var_dump('mining transactions again');
+$shaiq_coin->minePendingTransactions('shaiq-address');
+var_dump('balance of Shaiq is: ' . $shaiq_coin->getBalanceOfAddress('shaiq-address'));
